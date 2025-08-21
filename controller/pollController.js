@@ -41,11 +41,20 @@ export const createPoll = async (req, res) => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
     await newPoll.save();
-    res.status(201).json({ pollId: newPoll._id });
+
+    // Use env variable for frontend base URL
+    const baseUrl = process.env.FRONTEND_URL || "https://poll-react-app-1rqr.vercel.app";
+    const pollUrl = `${baseUrl}/poll/${newPoll._id}`;
+
+    res.status(201).json({ 
+      pollId: newPoll._id,
+      pollUrl 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error creating poll.' });
   }
 };
+
 
 export const getPoll = async (req, res) => {
   try {
