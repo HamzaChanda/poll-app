@@ -68,41 +68,41 @@ const frontendPath = path.join(__dirname, '..', 'frontend', 'dist');
 app.use(express.static(frontendPath));
 
 // SSR for Open Graph tags for poll pages
-app.get('/poll/:id', async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const poll = await Poll.findById(id);
+// app.get('/poll/:id', async (req, res, next) => {
+//     try {
+//         const { id } = req.params;
+//         const poll = await Poll.findById(id);
 
-        if (!poll) {
-            return res.status(404).sendFile(path.join(frontendPath, 'index.html'));
-        }
+//         if (!poll) {
+//             return res.status(404).sendFile(path.join(frontendPath, 'index.html'));
+//         }
 
-        const filePath = path.join(frontendPath, 'index.html');
-        fs.readFile(filePath, 'utf8', (err, htmlData) => {
-            if (err) {
-                console.error('Error reading index.html file:', err);
-                return res.status(500).end();
-            }
-            // Inject meta tags
-            const optionsText = poll.options.map(o => o.text).join(', ');
-            let htmlWithMeta = htmlData.replace(
-                '<title>Quick Poll</title>',
-                `<title>${poll.question}</title>`
-            );
-             htmlWithMeta = htmlWithMeta.replace(
-                '<meta name="description" content="A real-time polling application." />',
-                `<meta name="description" content="Vote on: ${optionsText}" />
-                 <meta property="og:title" content="${poll.question}" />
-                 <meta property="og:description" content="Click to cast your vote anonymously!" />
-                 <meta property="og:type" content="website" />
-                 <meta property="og:image" content="${process.env.CLIENT_URL}/favicon.svg" />`
-            );
-            res.send(htmlWithMeta);
-        });
-    } catch (error) {
-        next(); // Fallback to serving the static index.html
-    }
-});
+//         const filePath = path.join(frontendPath, 'index.html');
+//         fs.readFile(filePath, 'utf8', (err, htmlData) => {
+//             if (err) {
+//                 console.error('Error reading index.html file:', err);
+//                 return res.status(500).end();
+//             }
+//             // Inject meta tags
+//             const optionsText = poll.options.map(o => o.text).join(', ');
+//             let htmlWithMeta = htmlData.replace(
+//                 '<title>Quick Poll</title>',
+//                 `<title>${poll.question}</title>`
+//             );
+//              htmlWithMeta = htmlWithMeta.replace(
+//                 '<meta name="description" content="A real-time polling application." />',
+//                 `<meta name="description" content="Vote on: ${optionsText}" />
+//                  <meta property="og:title" content="${poll.question}" />
+//                  <meta property="og:description" content="Click to cast your vote anonymously!" />
+//                  <meta property="og:type" content="website" />
+//                  <meta property="og:image" content="${process.env.CLIENT_URL}/favicon.svg" />`
+//             );
+//             res.send(htmlWithMeta);
+//         });
+//     } catch (error) {
+//         next(); // Fallback to serving the static index.html
+//     }
+// });
 
 // Fallback to frontend's index.html for any other route
 app.get('*', (req, res) => {
