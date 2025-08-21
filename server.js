@@ -28,11 +28,11 @@ const io = new Server(server, {
 app.set('socketio', io);
 
 // DB Connection
-if (!process.env.MONGO_URI) {
-  console.error('Error: MONGO_URI is not defined in environment variables.');
+if (!process.env.MONGO_URL) {
+  console.error('Error: MONGO_URL is not defined in environment variables.');
   process.exit(1);
 }
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected...'))
   .catch(err => {
     console.error('MongoDB connection error:', err);
