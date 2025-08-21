@@ -88,6 +88,93 @@
 // server.listen(PORT, () => {
 //   console.log(`Server running on port ${PORT}`);
 // });
+// import express from 'express';
+// import mongoose from 'mongoose';
+// import http from 'http';
+// import { Server } from 'socket.io';
+// import cors from 'cors';
+// import dotenv from 'dotenv';
+// import cookieParser from 'cookie-parser';
+
+// import pollRoutes from './routes/pollRoutes.js';
+
+// dotenv.config();
+
+// const app = express();
+// const server = http.createServer(app);
+
+// // --- Allowed Origins ---
+// const allowedOrigins = [
+//   "http://localhost:5173",                  // local dev
+//   "https://poll-react-app-1rqr.vercel.app"  // deployed frontend
+// ];
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       // allow requests with no origin (like Postman)
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.includes(origin)) {
+//         return callback(null, true);
+//       } else {
+//         return callback(new Error("The CORS policy for this site does not allow access from your origin."));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
+
+// // --- Apply Middleware ---
+// app.use(express.json());
+// app.use(cookieParser());
+
+// // --- Database Connection ---
+// if (!process.env.MONGO_URL) {
+//   console.error("FATAL ERROR: MONGO_URL is not defined in environment variables.");
+//   process.exit(1);
+// }
+
+// mongoose
+//   .connect(process.env.MONGO_URL)
+//   .then(() => console.log("MongoDB connected successfully..."))
+//   .catch((err) => {
+//     console.error("MongoDB connection error:", err);
+//     process.exit(1);
+//   });
+
+// // --- API Routes ---
+// app.use("/api", pollRoutes);
+
+// // --- WebSocket (Socket.IO) Setup ---
+// const io = new Server(server, {
+//   cors: {
+//     origin: allowedOrigins,
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//   },
+// });
+
+// app.set("socketio", io);
+
+// io.on("connection", (socket) => {
+//   console.log("A user connected:", socket.id);
+
+//   socket.on("joinPoll", (pollId) => {
+//     socket.join(pollId);
+//     console.log(`User ${socket.id} joined poll room: ${pollId}`);
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
+
+// // --- Server Startup ---
+// const PORT = process.env.PORT || 5000;
+
+// server.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
 import express from 'express';
 import mongoose from 'mongoose';
 import http from 'http';
@@ -103,44 +190,31 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// --- Allowed Origins ---
-const allowedOrigins = [
-  "http://localhost:5173",                  // local dev
-  "https://poll-react-app-1rqr.vercel.app"  // deployed frontend
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("The CORS policy for this site does not allow access from your origin."));
-      }
-    },
-    credentials: true,
-  })
-);
-
-// --- Apply Middleware ---
-app.use(express.json());
-app.use(cookieParser());
-
 // --- Database Connection ---
 if (!process.env.MONGO_URL) {
   console.error("FATAL ERROR: MONGO_URL is not defined in environment variables.");
   process.exit(1);
 }
-
-mongoose
-  .connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB connected successfully..."))
   .catch((err) => {
     console.error("MongoDB connection error:", err);
     process.exit(1);
   });
+
+// --- Middleware ---
+
+// Use environment variables for allowed origins
+const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
+
+// This is a simpler and more direct way to configure CORS
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}));
+
+app.use(express.json());
+app.use(cookieParser());
 
 // --- API Routes ---
 app.use("/api", pollRoutes);
@@ -171,7 +245,6 @@ io.on("connection", (socket) => {
 
 // --- Server Startup ---
 const PORT = process.env.PORT || 5000;
-
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
