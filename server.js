@@ -171,9 +171,9 @@ mongoose.connect(process.env.MONGO_URL)
   });
 
 // --- Middleware ---
-app.use(express.static(path.join(__dirname, 'frontend/dist')));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 // Handles CORS by allowing multiple origins from your environment variables
 // Example CLIENT_URL: https://your-frontend.com,http://localhost:5173
