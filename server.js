@@ -284,9 +284,9 @@ mongoose.connect(process.env.MONGO_URL)
 const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
 
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true,
+  origin: allowedOrigins,
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -299,7 +299,6 @@ const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
-    credentials: true,
   },
 });
 
