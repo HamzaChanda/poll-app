@@ -205,13 +205,15 @@ mongoose.connect(process.env.MONGO_URL)
 // --- Middleware ---
 
 // Use environment variables for allowed origins
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
-
+const allowedOrigins = [
+  "http://localhost:5173", 
+  "https://poll-react-app-1rqr-3lcfrqioy-hamzachandas-projects.vercel.app"
+];
 // This is a simpler and more direct way to configure CORS
 app.use(cors({
-  origin: "https://poll-react-app-1rqr-3lcfrqioy-hamzachandas-projects.vercel.app/", // your Vercel frontend URL
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  credentials: true,
 }));
 
 app.use(express.json());
