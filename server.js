@@ -209,8 +209,9 @@ const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(','
 
 // This is a simpler and more direct way to configure CORS
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true,
+  origin: "https://poll-react-app-1rqr-3lcfrqioy-hamzachandas-projects.vercel.app/", // your Vercel frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 
 app.use(express.json());
